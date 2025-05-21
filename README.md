@@ -4,14 +4,21 @@
 
 ## 文件结构
 
-- `index2.html` - 静态HTML页面
+- `index.html` - 静态HTML页面
 - `Dockerfile` - 用于构建Docker镜像的配置文件
 - `docker-compose.yml` - 用于简化Docker部署的配置文件
 
 ## 部署说明
 
-### 方法一：使用Docker命令
-
+### 方法一：使用Docker run（推荐）
+  ```bash
+docker run -d -p 8080:80 omentwwnmfm/siliconflow-token:latest
+   ```
+### 方法二：使用Docker命令
+1. 首先使用git命令
+   ```bash
+   git clone https://github.com/OmenTwwnmfm/Siliconflow-Token.git
+   ```
 1. 构建Docker镜像
    ```bash
    docker build -t siliconflow-token .
@@ -22,7 +29,7 @@
    docker run -d -p 8080:80 siliconflow-token
    ```
 
-### 方法二：使用Docker Compose（推荐）
+### 方法三：使用Docker Compose
 
 1. 启动服务
    ```bash
