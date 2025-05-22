@@ -12,7 +12,10 @@
 
 ### 方法一：使用Docker run（推荐）
   ```bash
-docker run -d -p 8080:80 omentwwnmfm/siliconflow-token:latest
+docker run -d \
+	-p 8080:80 \
+	--restart unless-stopped \
+	omentwwnmfm/siliconflow-token:latest
    ```
 ### 方法二：使用Docker命令
 1. 首先使用git命令
