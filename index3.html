@@ -1,0 +1,2147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siliconflow Token</title>
+    <link rel="icon" href="https://pic1.imgdb.cn/item/6807b01358cb8da5c8c0d55c.jpg" type="image/jpeg" />
+    <meta name="description" content="硅基流动Token批量检测工具，支持格式转换、批量检测、排序和导出功能">
+    <meta name="theme-color" content="#3b82f6">
+    <style>
+        :root {
+            --radius: 0.5rem;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --secondary: #10b981;
+            --secondary-hover: #059669;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --warning: #f59e0b;
+            --warning-hover: #d97706;
+            --info: #6366f1;
+            --info-hover: #4f46e5;
+            --success: #22c55e;
+            --success-hover: #16a34a;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --gray: #6b7280;
+            --border: #e5e7eb;
+            --transition: 0.2s ease-in-out;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ebf5ff, #e0f2fe);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            color: var(--dark);
+            transition: background var(--transition);
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: var(--light);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            text-align: center;
+        }
+
+        .logo-inner {
+            display: inline-flex;
+            align-items: center;
+            background-color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: background-color var(--transition), box-shadow var(--transition);
+        }
+
+        .dark-mode .logo-inner {
+            background-color: #1f2937;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-left: 0.75rem;
+            transition: color var(--transition);
+        }
+
+        .dark-mode .logo-text {
+            color: white;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--dark);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color var(--transition), color var(--transition);
+        }
+
+        .dark-mode .theme-toggle {
+            color: var(--light);
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .card {
+            background-color: white;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: background-color var(--transition), box-shadow var(--transition);
+        }
+
+        .dark-mode .card {
+            background-color: #1f2937;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            transition: color var(--transition);
+        }
+
+        .dark-mode .card-title {
+            color: white;
+        }
+
+        .main-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            transition: color var(--transition);
+        }
+
+        .dark-mode .main-title {
+            color: white;
+        }
+
+        .converter-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .converter-btn {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: var(--radius);
+            background-color: #f3f4f6;
+            color: #4b5563;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color var(--transition), color var(--transition);
+        }
+
+        .dark-mode .converter-btn {
+            background-color: #374151;
+            color: #d1d5db;
+        }
+
+        .converter-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .converter-btn:hover {
+            background-color: #e5e7eb;
+        }
+
+        .dark-mode .converter-btn:hover {
+            background-color: #4b5563;
+        }
+
+        .converter-btn.active:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            resize: vertical;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            background-color: white;
+            color: var(--dark);
+            transition: background-color var(--transition), color var(--transition), border-color var(--transition);
+        }
+
+        .dark-mode .textarea {
+            background-color: #374151;
+            color: white;
+            border-color: #4b5563;
+        }
+
+        .textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+
+        .dark-mode .textarea:focus {
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color var(--transition), transform var(--transition), box-shadow var(--transition);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.5);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--secondary-hover);
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.5);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: var(--danger-hover);
+            box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.5);
+        }
+
+        .btn-info {
+            background-color: var(--info);
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: var(--info-hover);
+            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn-block {
+            display: flex;
+            width: 100%;
+        }
+
+        .btn:disabled, .btn.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            box-shadow: none !important;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 2rem;
+            height: 2rem;
+            border: 0.25rem solid rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+
+        .dark-mode .spinner {
+            border-color: rgba(59, 130, 246, 0.2);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .results {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .result-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .result-header {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: color var(--transition);
+        }
+
+        .dark-mode .result-header {
+            color: white;
+        }
+
+        .result-title {
+            display: flex;
+            align-items: center;
+        }
+
+        .result-icon {
+            margin-right: 0.5rem;
+            display: inline-flex;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            color: var(--gray);
+            transition: background-color var(--transition), color var(--transition);
+        }
+
+        .action-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--dark);
+        }
+
+        .dark-mode .action-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+        }
+
+        .result-content {
+            border-radius: var(--radius);
+            padding: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+            transition: background-color var(--transition), border-left-color var(--transition);
+        }
+
+        .valid-tokens {
+            background-color: #ecfdf5;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .dark-mode .valid-tokens {
+            background-color: rgba(16, 185, 129, 0.1);
+        }
+
+        .zero-tokens {
+            background-color: #fffbeb;
+            border-left: 4px solid var(--warning);
+        }
+
+        .dark-mode .zero-tokens {
+            background-color: rgba(245, 158, 11, 0.1);
+        }
+
+        .invalid-tokens {
+            background-color: #fef2f2;
+            border-left: 4px solid var(--danger);
+        }
+
+        .dark-mode .invalid-tokens {
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        .token-item {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+            transition: border-bottom-color var(--transition);
+        }
+
+        .dark-mode .token-item {
+            border-bottom-color: #4b5563;
+        }
+
+        .token-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .token-item p {
+            margin-bottom: 0.25rem;
+            transition: color var(--transition);
+        }
+
+        .token-item .token-value {
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .token-actions {
+            display: flex;
+            gap: 0.5rem;
+            opacity: 0.7;
+            transition: opacity var(--transition);
+        }
+
+        .token-item:hover .token-actions {
+            opacity: 1;
+        }
+
+        .token-action {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--gray);
+            transition: color var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .token-action:hover {
+            color: var(--primary);
+        }
+
+        .empty-message {
+            color: var(--gray);
+            transition: color var(--transition);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-primary {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+        }
+
+        .dark-mode .badge-primary {
+            background-color: rgba(59, 130, 246, 0.2);
+        }
+
+        .badge-secondary {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--secondary);
+        }
+
+        .dark-mode .badge-secondary {
+            background-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .badge-danger {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .dark-mode .badge-danger {
+            background-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .badge-warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .dark-mode .badge-warning {
+            background-color: rgba(245, 158, 11, 0.2);
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: auto;
+            min-width: 120px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+            font-size: 0.75rem;
+        }
+
+        .tooltip .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .toast {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius);
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-top: 0.5rem;
+            transform: translateX(120%);
+            transition: transform 0.3s ease-out;
+            max-width: 350px;
+        }
+
+        .dark-mode .toast {
+            background-color: #1f2937;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .toast-content {
+            flex-grow: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .dark-mode .toast-title {
+            color: white;
+        }
+
+        .toast-message {
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+
+        .dark-mode .toast-message {
+            color: #d1d5db;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--gray);
+            margin-left: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .toast-close:hover {
+            color: var(--dark);
+        }
+
+        .dark-mode .toast-close:hover {
+            color: white;
+        }
+
+        .toast-success .toast-icon {
+            color: var(--success);
+        }
+
+        .toast-error .toast-icon {
+            color: var(--danger);
+        }
+
+        .toast-warning .toast-icon {
+            color: var(--warning);
+        }
+
+        .toast-info .toast-icon {
+            color: var(--info);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: #e5e7eb;
+            border-radius: 4px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .dark-mode .progress-container {
+            background-color: #4b5563;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 4px;
+            width: 0;
+            transition: width 0.3s ease;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            transition: border-top-color var(--transition);
+        }
+
+        .dark-mode .stats {
+            border-top-color: #4b5563;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            transition: color var(--transition);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--gray);
+            transition: color var(--transition);
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1rem;
+            transition: border-bottom-color var(--transition);
+        }
+
+        .dark-mode .tabs {
+            border-bottom-color: #4b5563;
+        }
+
+        .tab {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            color: var(--gray);
+            transition: color var(--transition), border-bottom-color var(--transition);
+        }
+
+        .tab:hover {
+            color: var(--primary);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .file-drop-area {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color var(--transition), background-color var(--transition);
+        }
+
+        .dark-mode .file-drop-area {
+            border-color: #4b5563;
+        }
+
+        .file-drop-area:hover, .file-drop-area.drag-over {
+            border-color: var(--primary);
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+
+        .dark-mode .file-drop-area:hover, .dark-mode .file-drop-area.drag-over {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        .file-drop-icon {
+            color: var(--gray);
+            margin-bottom: 1rem;
+            transition: color var(--transition);
+        }
+
+        .file-drop-area:hover .file-drop-icon, .file-drop-area.drag-over .file-drop-icon {
+            color: var(--primary);
+        }
+
+        .file-drop-message {
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+            transition: color var(--transition);
+        }
+
+        .file-drop-hint {
+            font-size: 0.75rem;
+            color: var(--gray);
+            transition: color var(--transition);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition), visibility var(--transition);
+        }
+
+        .modal-backdrop.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: white;
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: scale(0.9);
+            transition: transform var(--transition);
+        }
+
+        .dark-mode .modal {
+            background-color: #1f2937;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-backdrop.show .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: border-bottom-color var(--transition);
+        }
+
+        .dark-mode .modal-header {
+            border-bottom-color: #4b5563;
+        }
+
+        .modal-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--dark);
+            transition: color var(--transition);
+        }
+
+        .dark-mode .modal-title {
+            color: white;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--gray);
+            transition: color var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--dark);
+        }
+
+        .dark-mode .modal-close:hover {
+            color: white;
+        }
+
+        .modal-body {
+            padding: 1rem;
+        }
+
+        .modal-footer {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            transition: border-top-color var(--transition);
+        }
+
+        .dark-mode .modal-footer {
+            border-top-color: #4b5563;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+            transition: color var(--transition);
+        }
+
+        .dark-mode .form-label {
+            color: white;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            background-color: white;
+            color: var(--dark);
+            transition: border-color var(--transition), box-shadow var(--transition), background-color var(--transition), color var(--transition);
+        }
+
+        .dark-mode .form-control {
+            background-color: #374151;
+            color: white;
+            border-color: #4b5563;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+
+        .dark-mode .form-control:focus {
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+        }
+
+        .form-text {
+            font-size: 0.75rem;
+            color: var(--gray);
+            margin-top: 0.25rem;
+            transition: color var(--transition);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-input {
+            margin-right: 0.5rem;
+        }
+
+        .checkbox-label {
+            font-size: 0.875rem;
+            color: var(--dark);
+            transition: color var(--transition);
+        }
+
+        .dark-mode .checkbox-label {
+            color: white;
+        }
+
+        .settings-icon {
+            cursor: pointer;
+            color: var(--gray);
+            transition: color var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .settings-icon:hover {
+            color: var(--primary);
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark-mode .settings-icon:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .button-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-row {
+                flex-direction: column;
+            }
+
+            .stats {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .stat-item {
+                flex: 1 0 40%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .converter-buttons {
+                flex-direction: column;
+            }
+
+            .tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .tab {
+                padding: 0.5rem 0.75rem;
+            }
+        }
+
+        /* 打印样式 */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-inner">
+                    <img src="https://pic1.imgdb.cn/item/6807b01358cb8da5c8c0d55c.jpg" alt="Logo" style="width:36px;height:36px;border-radius:var(--radius);">
+                    <div class="logo-text">Siliconflow Token</div>
+                </div>
+            </div>
+            <div class="settings-wrapper">
+                <button class="theme-toggle" id="themeToggle" aria-label="切换主题">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="result-icon"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                格式转换工具
+            </h3>
+            <div class="tabs">
+                <div class="tab active" data-tab="converter">格式转换</div>
+                <div class="tab" data-tab="file-import">文件导入</div>
+            </div>
+            <div class="tab-content active" id="converter-tab">
+                <div class="converter-buttons">
+                    <button class="converter-btn active" id="toLineBtn">转换为每行一个</button>
+                    <button class="converter-btn" id="toCommaBtn">转换为逗号分隔</button>
+                </div>
+                <textarea class="textarea" id="converterInput" placeholder="在此输入API密钥，支持多种格式"></textarea>
+                <div class="button-row">
+                    <button class="btn btn-primary btn-block" id="convertBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                        执行转换
+                    </button>
+                </div>
+            </div>
+            <div class="tab-content" id="file-import-tab">
+                <div class="file-drop-area" id="fileDropArea">
+                    <div class="file-drop-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    </div>
+                    <div class="file-drop-message">拖放文件到此处或点击上传</div>
+                    <div class="file-drop-hint">支持 .txt, .csv, .json 文件</div>
+                    <input type="file" id="fileInput" class="file-input" accept=".txt,.csv,.json">
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="main-title">批量检测硅基流动Token</h2>
+            <textarea class="textarea" id="tokenInput" placeholder="每行输入一个API密钥，或粘贴逗号分隔的密钥"></textarea>
+            
+            <div class="form-group">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="autoFormat" class="checkbox-input" checked>
+                    <label for="autoFormat" class="checkbox-label">自动识别并格式化输入</label>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary btn-block" id="checkBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                批量检测
+            </button>
+            
+            <div class="progress-container" id="progressContainer" style="display: none;">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            
+            <div class="button-grid">
+                <button class="btn btn-primary" id="sortDescBtn" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                    按余额降序
+                </button>
+                <button class="btn btn-primary" id="sortAscBtn" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+                    按余额升序
+                </button>
+                <button class="btn btn-secondary" id="exportDescBtn" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    导出降序Token
+                </button>
+                <button class="btn btn-secondary" id="exportAscBtn" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    导出升序Token
+                </button>
+            </div>
+
+            <div class="button-row" style="margin-top: 1rem;">
+                <button class="btn btn-info" id="exportAllBtn" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    导出所有结果
+                </button>
+                <button class="btn btn-danger" id="clearBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    清空结果
+                </button>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>检测中，请稍候...</p>
+            </div>
+
+            <div class="stats" id="statsContainer" style="display: none;">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalCount">0</div>
+                    <div class="stat-label">总计</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="validCountStat">0</div>
+                    <div class="stat-label">有效</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="zeroCountStat">0</div>
+                    <div class="stat-label">零余额</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="invalidCountStat">0</div>
+                    <div class="stat-label">无效</div>
+                </div>
+            </div>
+
+            <div class="results">
+                <!-- 有效Token结果 -->
+                <div class="result-section">
+                    <div class="result-header">
+                        <div class="result-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="result-icon"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            有效Token (<span id="validCount">0</span>)
+                        </div>
+                        <div class="result-actions">
+                            <button class="action-btn tooltip" id="copyValidBtn">
+                                <span class="tooltip-text">复制所有有效Token</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            </button>
+                            <button class="action-btn tooltip" id="exportValidBtn">
+                                <span class="tooltip-text">导出有效Token</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="result-content valid-tokens" id="validTokens">
+                        <p class="empty-message">暂无有效Token</p>
+                    </div>
+                </div>
+
+                <!-- 零余额Token结果 -->
+                <div class="result-section">
+                    <div class="result-header">
+                        <div class="result-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="result-icon"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                            零余额Token (<span id="zeroCount">0</span>)
+                        </div>
+                        <div class="result-actions">
+                            <button class="action-btn tooltip" id="copyZeroBtn">
+                                <span class="tooltip-text">复制所有零余额Token</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            </button>
+                            <button class="action-btn tooltip" id="exportZeroBtn">
+                                <span class="tooltip-text">导出零余额Token</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="result-content zero-tokens" id="zeroTokens">
+                        <p class="empty-message">暂无零余额Token</p>
+                    </div>
+                </div>
+
+                <!-- 无效Token结果 -->
+                <div class="result-section">
+                    <div class="result-header">
+                        <div class="result-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="result-icon"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                            无效Token (<span id="invalidCount">0</span>)
+                        </div>
+                        <div class="result-actions">
+                            <button class="action-btn tooltip" id="copyInvalidBtn">
+                                <span class="tooltip-text">复制所有无效Token</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            </button>
+                            <button class="action-btn tooltip" id="exportInvalidBtn">
+                                <span class="tooltip-text">导出无效Token</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="result-content invalid-tokens" id="invalidTokens">
+                        <p class="empty-message">暂无无效Token</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导出选项模态框 -->
+    <div class="modal-backdrop" id="exportModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">导出选项</h3>
+                <button class="modal-close" id="closeExportModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">导出格式</label>
+                    <select class="form-control" id="exportFormat">
+                        <option value="txt">文本文件 (.txt)</option>
+                        <option value="csv">CSV文件 (.csv)</option>
+                        <option value="json">JSON文件 (.json)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">包含内容</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="includeBalance" class="checkbox-input" checked>
+                        <label for="includeBalance" class="checkbox-label">包含余额信息</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="includeUserInfo" class="checkbox-input" checked>
+                        <label for="includeUserInfo" class="checkbox-label">包含用户信息</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">文件名</label>
+                    <input type="text" class="form-control" id="exportFilename" value="siliconflow_tokens">
+                    <div class="form-text">文件扩展名将根据选择的格式自动添加</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelExport">取消</button>
+                <button class="btn btn-primary" id="confirmExport">导出</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let inputFormat = 'lines'; // 'lines' 或 'comma'
+        let validTokens = [];
+        let zeroTokens = [];
+        let invalidTokens = [];
+        let currentExportType = 'all'; // 'all', 'valid', 'zero', 'invalid'
+        let darkMode = localStorage.getItem('darkMode') === 'true';
+        let batchSize = 5; // 每批处理的Token数量
+        let concurrentRequests = 3; // 并发请求数量
+
+        // DOM 元素
+        const toLineBtn = document.getElementById('toLineBtn');
+        const toCommaBtn = document.getElementById('toCommaBtn');
+        const converterInput = document.getElementById('converterInput');
+        const convertBtn = document.getElementById('convertBtn');
+        const tokenInput = document.getElementById('tokenInput');
+        const checkBtn = document.getElementById('checkBtn');
+        const sortDescBtn = document.getElementById('sortDescBtn');
+        const sortAscBtn = document.getElementById('sortAscBtn');
+        const exportDescBtn = document.getElementById('exportDescBtn');
+        const exportAscBtn = document.getElementById('exportAscBtn');
+        const exportAllBtn = document.getElementById('exportAllBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const loading = document.getElementById('loading');
+        const validTokensEl = document.getElementById('validTokens');
+        const zeroTokensEl = document.getElementById('zeroTokens');
+        const invalidTokensEl = document.getElementById('invalidTokens');
+        const validCountEl = document.getElementById('validCount');
+        const zeroCountEl = document.getElementById('zeroCount');
+        const invalidCountEl = document.getElementById('invalidCount');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const statsContainer = document.getElementById('statsContainer');
+        const totalCountEl = document.getElementById('totalCount');
+        const validCountStatEl = document.getElementById('validCountStat');
+        const zeroCountStatEl = document.getElementById('zeroCountStat');
+        const invalidCountStatEl = document.getElementById('invalidCountStat');
+        const themeToggle = document.getElementById('themeToggle');
+        const autoFormatCheckbox = document.getElementById('autoFormat');
+        const copyValidBtn = document.getElementById('copyValidBtn');
+        const copyZeroBtn = document.getElementById('copyZeroBtn');
+        const copyInvalidBtn = document.getElementById('copyInvalidBtn');
+        const exportValidBtn = document.getElementById('exportValidBtn');
+        const exportZeroBtn = document.getElementById('exportZeroBtn');
+        const exportInvalidBtn = document.getElementById('exportInvalidBtn');
+        const exportModal = document.getElementById('exportModal');
+        const closeExportModal = document.getElementById('closeExportModal');
+        const cancelExport = document.getElementById('cancelExport');
+        const confirmExport = document.getElementById('confirmExport');
+        const exportFormat = document.getElementById('exportFormat');
+        const includeBalance = document.getElementById('includeBalance');
+        const includeUserInfo = document.getElementById('includeUserInfo');
+        const exportFilename = document.getElementById('exportFilename');
+        const fileDropArea = document.getElementById('fileDropArea');
+        const fileInput = document.getElementById('fileInput');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        // 初始禁用排序和导出按钮
+        sortDescBtn.disabled = true;
+        sortAscBtn.disabled = true;
+        exportDescBtn.disabled = true;
+        exportAscBtn.disabled = true;
+        exportAllBtn.disabled = true;
+
+        // 应用深色模式
+        if (darkMode) {
+            document.body.classList.add('dark-mode');
+            updateThemeToggleIcon();
+        }
+
+        // 主题切换
+        themeToggle.addEventListener('click', () => {
+            darkMode = !darkMode;
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', darkMode);
+            updateThemeToggleIcon();
+            showToast('success', '主题已切换', darkMode ? '已切换到深色模式' : '已切换到浅色模式');
+        });
+
+        function updateThemeToggleIcon() {
+            themeToggle.innerHTML = darkMode 
+                ? '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>'
+                : '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
+        }
+
+        // 标签页切换
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                
+                // 更新标签页状态
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // 更新内容区域
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === tabId + '-tab') {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        // 格式转换按钮事件
+        toLineBtn.addEventListener('click', () => {
+            inputFormat = 'lines';
+            toLineBtn.classList.add('active');
+            toCommaBtn.classList.remove('active');
+        });
+
+        toCommaBtn.addEventListener('click', () => {
+            inputFormat = 'comma';
+            toCommaBtn.classList.add('active');
+            toLineBtn.classList.remove('active');
+        });
+
+        // 执行转换
+        convertBtn.addEventListener('click', () => {
+            if (!converterInput.value.trim()) {
+                showToast('warning', '输入为空', '请先输入需要转换的内容');
+                return;
+            }
+            
+            let result = '';
+            if (inputFormat === 'lines') {
+                // 转换为每行一个
+                result = converterInput.value
+                    .split(/[,;\t]/) // 支持逗号、分号、制表符分隔
+                    .map(t => t.trim())
+                    .filter(t => t)
+                    .join('\n');
+            } else {
+                // 转换为逗号分隔
+                result = converterInput.value
+                    .split(/[\n\r]/) // 支持不同类型的换行符
+                    .map(t => t.trim())
+                    .filter(t => t)
+                    .join(',');
+            }
+            
+            tokenInput.value = result;
+            showToast('success', '转换成功', '已将内容转换为' + (inputFormat === 'lines' ? '每行一个' : '逗号分隔') + '格式');
+        });
+
+        // 文件拖放区域事件
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileDropArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileDropArea.addEventListener(eventName, () => {
+                fileDropArea.classList.add('drag-over');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileDropArea.addEventListener(eventName, () => {
+                fileDropArea.classList.remove('drag-over');
+            }, false);
+        });
+
+        fileDropArea.addEventListener('drop', handleDrop, false);
+        fileDropArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFiles);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles({ target: { files } });
+        }
+
+        function handleFiles(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            const fileName = file.name.toLowerCase();
+
+            reader.onload = function(event) {
+                let content = event.target.result;
+                
+                // 根据文件类型处理内容
+                if (fileName.endsWith('.json')) {
+                    try {
+                        const jsonData = JSON.parse(content);
+                        if (Array.isArray(jsonData)) {
+                            // 如果是数组，假设每个元素是一个token或包含token的对象
+                            content = jsonData.map(item => typeof item === 'string' ? item : (item.token || item.key || '')).filter(Boolean).join('\n');
+                        } else if (typeof jsonData === 'object') {
+                            // 如果是对象，尝试提取所有可能的token字段
+                            const tokens = [];
+                            for (const key in jsonData) {
+                                if (typeof jsonData[key] === 'string' && jsonData[key].length > 8) {
+                                    tokens.push(jsonData[key]);
+                                }
+                            }
+                            content = tokens.join('\n');
+                        }
+                    } catch (error) {
+                        showToast('error', '解析失败', 'JSON格式不正确');
+                        return;
+                    }
+                } else if (fileName.endsWith('.csv')) {
+                    // 简单CSV解析，假设第一列是token
+                    const lines = content.split('\n');
+                    content = lines.map(line => {
+                        const columns = line.split(',');
+                        return columns[0]?.trim() || '';
+                    }).filter(Boolean).join('\n');
+                } else {
+                    // 文本文件，尝试智能分割
+                    if (content.includes(',')) {
+                        content = content.split(',').map(t => t.trim()).filter(Boolean).join('\n');
+                    } else if (content.includes(';')) {
+                        content = content.split(';').map(t => t.trim()).filter(Boolean).join('\n');
+                    }
+                    // 如果已经是每行一个，保持不变
+                }
+                
+                tokenInput.value = content;
+                showToast('success', '文件导入成功', `已导入文件: ${file.name}`);
+                
+                // 切换到主标签页
+                tabs[0].click();
+            };
+            
+            reader.onerror = function() {
+                showToast('error', '读取失败', '无法读取文件');
+            };
+            
+            reader.readAsText(file);
+        }
+
+        // 批量检测
+        checkBtn.addEventListener('click', async () => {
+            const input = tokenInput.value.trim();
+            if (!input) {
+                showToast('warning', '输入为空', '请输入至少一个API密钥');
+                return;
+            }
+            
+            // 解析输入的Token
+            let tokenList = [];
+            
+            if (autoFormatCheckbox.checked) {
+                // 自动识别格式
+                if (input.includes(',')) {
+                    tokenList = input.split(',').map(t => t.trim()).filter(t => t);
+                } else if (input.includes(';')) {
+                    tokenList = input.split(';').map(t => t.trim()).filter(t => t);
+                } else {
+                    tokenList = input.split('\n').map(t => t.trim()).filter(t => t);
+                }
+            } else {
+                // 按照换行符分割
+                tokenList = input.split('\n').map(t => t.trim()).filter(t => t);
+            }
+            
+            // 去重
+            tokenList = [...new Set(tokenList)];
+            
+            if (tokenList.length === 0) {
+                showToast('warning', '输入为空', '解析后没有有效的API密钥');
+                return;
+            }
+            
+            // 清空结果
+            validTokens = [];
+            zeroTokens = [];
+            invalidTokens = [];
+            updateResults();
+            
+            // 禁用排序和导出按钮
+            sortDescBtn.disabled = true;
+            sortAscBtn.disabled = true;
+            exportDescBtn.disabled = true;
+            exportAscBtn.disabled = true;
+            exportAllBtn.disabled = true;
+            
+            // 禁用检测按钮
+            checkBtn.disabled = true;
+            
+            // 显示加载中和进度条
+            loading.style.display = 'block';
+            progressContainer.style.display = 'block';
+            progressBar.style.width = '0%';
+            
+            // 批量检测
+            try {
+                await batchCheckTokens(tokenList);
+                
+                // 更新统计信息
+                statsContainer.style.display = 'flex';
+                totalCountEl.textContent = tokenList.length;
+                validCountStatEl.textContent = validTokens.length;
+                zeroCountStatEl.textContent = zeroTokens.length;
+                invalidCountStatEl.textContent = invalidTokens.length;
+                
+                // 启用排序和导出按钮
+                const hasValidTokens = validTokens.length > 0;
+                sortDescBtn.disabled = !hasValidTokens;
+                sortAscBtn.disabled = !hasValidTokens;
+                exportDescBtn.disabled = !hasValidTokens;
+                exportAscBtn.disabled = !hasValidTokens;
+                exportAllBtn.disabled = tokenList.length === 0;
+                
+                showToast('success', '检测完成', `共检测 ${tokenList.length} 个Token，有效 ${validTokens.length} 个`);
+            } catch (error) {
+                showToast('error', '检测失败', error.message || '请求过程中发生错误');
+            } finally {
+                // 隐藏加载中和进度条
+                loading.style.display = 'none';
+                progressContainer.style.display = 'none';
+                
+                // 启用检测按钮
+                checkBtn.disabled = false;
+            }
+        });
+
+        // 批量检测Token
+        async function batchCheckTokens(tokenList) {
+            const total = tokenList.length;
+            let processed = 0;
+            
+            // 分批处理
+            for (let i = 0; i < total; i += batchSize) {
+                const batch = tokenList.slice(i, i + batchSize);
+                
+                // 并发处理当前批次
+                const batchResults = await Promise.all(
+                    batch.map(token => checkToken(token))
+                );
+                
+                // 处理结果
+                batchResults.forEach(result => {
+                    if (result.valid && result.balance > 0) {
+                        validTokens.push(result);
+                    } else if (result.valid && result.balance <= 0) {
+                        zeroTokens.push(result);
+                    } else {
+                        invalidTokens.push(result);
+                    }
+                });
+                
+                // 更新进度
+                processed += batch.length;
+                const progress = (processed / total) * 100;
+                progressBar.style.width = `${progress}%`;
+                
+                // 更新结果显示
+                updateResults();
+                
+                // 如果不是最后一批，添加小延迟避免API限制
+                if (i + batchSize < total) {
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                }
+            }
+        }
+
+        // 检测单个Token
+        async function checkToken(token) {
+            try {
+                const response = await fetch('https://api.siliconflow.cn/v1/user/info', {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok || !data.status) {
+                    return { 
+                        token, 
+                        valid: false, 
+                        error: data.message || '无效Token',
+                        timestamp: new Date().toISOString()
+                    };
+                }
+                
+                return { 
+                    token, 
+                    valid: true, 
+                    balance: data.data.balance || 0,
+                    user: data.data,
+                    timestamp: new Date().toISOString()
+                };
+            } catch (error) {
+                return { 
+                    token, 
+                    valid: false, 
+                    error: '请求失败: ' + (error.message || '网络错误'),
+                    timestamp: new Date().toISOString()
+                };
+            }
+        }
+
+        // 排序功能
+        sortDescBtn.addEventListener('click', () => sortTokens('desc'));
+        sortAscBtn.addEventListener('click', () => sortTokens('asc'));
+
+        // 导出功能
+        exportDescBtn.addEventListener('click', () => showExportModal('desc'));
+        exportAscBtn.addEventListener('click', () => showExportModal('asc'));
+        exportAllBtn.addEventListener('click', () => showExportModal('all'));
+        
+        // 复制功能
+        copyValidBtn.addEventListener('click', () => copyTokens(validTokens));
+        copyZeroBtn.addEventListener('click', () => copyTokens(zeroTokens));
+        copyInvalidBtn.addEventListener('click', () => copyTokens(invalidTokens));
+        
+        // 导出特定类型
+        exportValidBtn.addEventListener('click', () => {
+            currentExportType = 'valid';
+            showExportModal();
+        });
+        
+        exportZeroBtn.addEventListener('click', () => {
+            currentExportType = 'zero';
+            showExportModal();
+        });
+        
+        exportInvalidBtn.addEventListener('click', () => {
+            currentExportType = 'invalid';
+            showExportModal();
+        });
+
+        // 清空结果
+        clearBtn.addEventListener('click', () => {
+            if (validTokens.length === 0 && zeroTokens.length === 0 && invalidTokens.length === 0) {
+                showToast('info', '无需清空', '当前没有检测结果');
+                return;
+            }
+            
+            validTokens = [];
+            zeroTokens = [];
+            invalidTokens = [];
+            updateResults();
+            
+            // 禁用排序和导出按钮
+            sortDescBtn.disabled = true;
+            sortAscBtn.disabled = true;
+            exportDescBtn.disabled = true;
+            exportAscBtn.disabled = true;
+            exportAllBtn.disabled = true;
+            
+            // 隐藏统计信息
+            statsContainer.style.display = 'none';
+            
+            showToast('success', '已清空', '所有检测结果已清空');
+        });
+
+        // 导出模态框事件
+        closeExportModal.addEventListener('click', hideExportModal);
+        cancelExport.addEventListener('click', hideExportModal);
+        confirmExport.addEventListener('click', executeExport);
+
+        // 显示导出模态框
+        function showExportModal(sortOrder) {
+            currentExportType = sortOrder || currentExportType;
+            exportModal.classList.add('show');
+        }
+
+        // 隐藏导出模态框
+        function hideExportModal() {
+            exportModal.classList.remove('show');
+        }
+
+        // 执行导出
+        function executeExport() {
+            const format = exportFormat.value;
+            const filename = exportFilename.value || 'siliconflow_tokens';
+            const includeBalanceValue = includeBalance.checked;
+            const includeUserInfoValue = includeUserInfo.checked;
+            
+            let tokensToExport = [];
+            
+            // 根据当前导出类型和排序选择要导出的tokens
+            if (currentExportType === 'valid') {
+                tokensToExport = [...validTokens];
+            } else if (currentExportType === 'zero') {
+                tokensToExport = [...zeroTokens];
+            } else if (currentExportType === 'invalid') {
+                tokensToExport = [...invalidTokens];
+            } else if (currentExportType === 'desc') {
+                tokensToExport = [...validTokens].sort((a, b) => b.balance - a.balance);
+            } else if (currentExportType === 'asc') {
+                tokensToExport = [...validTokens].sort((a, b) => a.balance - b.balance);
+            } else if (currentExportType === 'all') {
+                tokensToExport = [...validTokens, ...zeroTokens, ...invalidTokens];
+            }
+            
+            if (tokensToExport.length === 0) {
+                showToast('warning', '导出失败', '没有可导出的Token');
+                hideExportModal();
+                return;
+            }
+            
+            let content = '';
+            let mimeType = 'text/plain';
+            let extension = '.txt';
+            
+            if (format === 'txt') {
+                // 文本格式
+                if (includeBalanceValue || includeUserInfoValue) {
+                    content = tokensToExport.map(t => {
+                        let line = `Token: ${t.token}`;
+                        if (t.valid && includeBalanceValue) {
+                            line += `, 余额: ${t.balance || 0}`;
+                        }
+                        if (t.valid && includeUserInfoValue && t.user) {
+                            line += `, 用户: ${t.user.name || '未命名'}`;
+                            if (t.user.email) line += `, 邮箱: ${t.user.email}`;
+                        }
+                        if (!t.valid) {
+                            line += `, 状态: 无效, 原因: ${t.error || '未知错误'}`;
+                        }
+                        return line;
+                    }).join('\n');
+                } else {
+                    // 只导出token值
+                    content = tokensToExport.map(t => t.token).join('\n');
+                }
+                mimeType = 'text/plain';
+                extension = '.txt';
+            } else if (format === 'csv') {
+                // CSV格式
+                let headers = ['Token'];
+                if (includeBalanceValue) headers.push('余额');
+                if (includeUserInfoValue) headers.push('用户名', '邮箱');
+                headers.push('状态');
+                
+                content = headers.join(',') + '\n';
+                
+                content += tokensToExport.map(t => {
+                    let row = [t.token];
+                    if (includeBalanceValue) row.push(t.valid ? (t.balance || 0) : '');
+                    if (includeUserInfoValue) {
+                        row.push(t.valid && t.user ? (t.user.name || '未命名') : '');
+                        row.push(t.valid && t.user ? (t.user.email || '') : '');
+                    }
+                    row.push(t.valid ? (t.balance > 0 ? '有效' : '零余额') : '无效');
+                    
+                    // 处理CSV中的特殊字符
+                    return row.map(cell => {
+                        if (typeof cell === 'string' && (cell.includes(',') || cell.includes('"') || cell.includes('\n'))) {
+                            return `"${cell.replace(/"/g, '""')}"`;
+                        }
+                        return cell;
+                    }).join(',');
+                }).join('\n');
+                
+                mimeType = 'text/csv';
+                extension = '.csv';
+            } else if (format === 'json') {
+                // JSON格式
+                let jsonData = tokensToExport.map(t => {
+                    let obj = { token: t.token };
+                    
+                    if (t.valid) {
+                        obj.status = t.balance > 0 ? '有效' : '零余额';
+                        if (includeBalanceValue) obj.balance = t.balance || 0;
+                        
+                        if (includeUserInfoValue && t.user) {
+                            obj.user = {
+                                name: t.user.name || '未命名'
+                            };
+                            if (t.user.email) obj.user.email = t.user.email;
+                        }
+                    } else {
+                        obj.status = '无效';
+                        obj.error = t.error || '未知错误';
+                    }
+                    
+                    return obj;
+                });
+                
+                content = JSON.stringify(jsonData, null, 2);
+                mimeType = 'application/json';
+                extension = '.json';
+            }
+            
+            // 创建并下载文件
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename + extension;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            hideExportModal();
+            showToast('success', '导出成功', `已导出 ${tokensToExport.length} 个Token到 ${filename}${extension}`);
+        }
+
+        // 复制Token
+        function copyTokens(tokens) {
+            if (tokens.length === 0) {
+                showToast('warning', '复制失败', '没有可复制的Token');
+                return;
+            }
+            
+            const text = tokens.map(t => t.token).join('\n');
+            
+            // 使用Clipboard API
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text)
+                    .then(() => {
+                        showToast('success', '复制成功', `已复制 ${tokens.length} 个Token到剪贴板`);
+                    })
+                    .catch(err => {
+                        // 回退到传统方法
+                        fallbackCopy(text);
+                    });
+            } else {
+                // 回退到传统方法
+                fallbackCopy(text);
+            }
+        }
+
+        // 回退复制方法
+        function fallbackCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast('success', '复制成功', '内容已复制到剪贴板');
+                } else {
+                    showToast('error', '复制失败', '请手动复制内容');
+                }
+            } catch (err) {
+                showToast('error', '复制失败', '请手动复制内容');
+            }
+            
+            document.body.removeChild(textarea);
+        }
+
+        // 排序Token
+        function sortTokens(order) {
+            validTokens.sort((a, b) => 
+                order === 'asc' ? a.balance - b.balance : b.balance - a.balance
+            );
+            updateResults();
+            showToast('success', '排序完成', `已按余额${order === 'asc' ? '升序' : '降序'}排列`);
+        }
+
+        // 更新结果显示
+        function updateResults() {
+            // 更新计数
+            validCountEl.textContent = validTokens.length;
+            zeroCountEl.textContent = zeroTokens.length;
+            invalidCountEl.textContent = invalidTokens.length;
+            
+            // 更新有效Token
+            if (validTokens.length > 0) {
+                validTokensEl.innerHTML = validTokens.map((token, index) => `
+                    <div class="token-item">
+                        <p class="token-value">
+                            <span>Token: ${token.token}</span>
+                            <span class="token-actions">
+                                <button class="token-action tooltip" onclick="copyToClipboard('${token.token}')">
+                                    <span class="tooltip-text">复制Token</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                </button>
+                            </span>
+                        </p>
+                        <p>余额: <span class="badge badge-secondary">${token.balance}</span></p>
+                        <p>用户名: ${token.user?.name || '未命名用户'}</p>
+                        <p>邮箱: ${token.user?.email || '未提供'}</p>
+                        <p>检测时间: ${formatDate(token.timestamp)}</p>
+                    </div>
+                `).join('');
+            } else {
+                validTokensEl.innerHTML = '<p class="empty-message">暂无有效Token</p>';
+            }
+            
+            // 更新零余额Token
+            if (zeroTokens.length > 0) {
+                zeroTokensEl.innerHTML = zeroTokens.map((token, index) => `
+                    <div class="token-item">
+                        <p class="token-value">
+                            <span>Token: ${token.token}</span>
+                            <span class="token-actions">
+                                <button class="token-action tooltip" onclick="copyToClipboard('${token.token}')">
+                                    <span class="tooltip-text">复制Token</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                </button>
+                            </span>
+                        </p>
+                        <p>用户名: ${token.user?.name || '未命名用户'}</p>
+                        <p>余额: <span class="badge badge-warning">0</span></p>
+                        <p>检测时间: ${formatDate(token.timestamp)}</p>
+                    </div>
+                `).join('');
+            } else {
+                zeroTokensEl.innerHTML = '<p class="empty-message">暂无零余额Token</p>';
+            }
+            
+            // 更新无效Token
+            if (invalidTokens.length > 0) {
+                invalidTokensEl.innerHTML = invalidTokens.map((token, index) => `
+                    <div class="token-item">
+                        <p class="token-value">
+                            <span>Token: ${token.token}</span>
+                            <span class="token-actions">
+                                <button class="token-action tooltip" onclick="copyToClipboard('${token.token}')">
+                                    <span class="tooltip-text">复制Token</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                </button>
+                            </span>
+                        </p>
+                        <p>状态: <span class="badge badge-danger">无效</span></p>
+                        <p>原因: ${token.error || '未知错误'}</p>
+                        <p>检测时间: ${formatDate(token.timestamp)}</p>
+                    </div>
+                `).join('');
+            } else {
+                invalidTokensEl.innerHTML = '<p class="empty-message">暂无无效Token</p>';
+            }
+        }
+
+        // 格式化日期
+        function formatDate(dateString) {
+            if (!dateString) return '未知时间';
+            
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+            } catch (e) {
+                return '未知时间';
+            }
+        }
+
+        // 显示通知
+        function showToast(type, title, message) {
+            const toastContainer = document.getElementById('toastContainer');
+            
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            let iconSvg = '';
+            switch (type) {
+                case 'success':
+                    iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
+                    break;
+                case 'error':
+                    iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+                    break;
+                case 'warning':
+                    iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>';
+                    break;
+                case 'info':
+                    iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+                    break;
+            }
+            
+            toast.innerHTML = `
+                <div class="toast-icon">${iconSvg}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // 添加关闭事件
+            const closeBtn = toast.querySelector('.toast-close');
+            closeBtn.addEventListener('click', () => {
+                toast.remove();
+            });
+            
+            // 显示动画
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            // 自动关闭
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 5000);
+        }
+
+        // 复制到剪贴板的全局函数
+        window.copyToClipboard = function(text) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text)
+                    .then(() => {
+                        showToast('success', '复制成功', '内容已复制到剪贴板');
+                    })
+                    .catch(err => {
+                        fallbackCopy(text);
+                    });
+            } else {
+                fallbackCopy(text);
+            }
+        };
+
+        // 初始化
+        toLineBtn.classList.add('active');
+        
+        // 检测浏览器是否支持Clipboard API
+        if (!navigator.clipboard || !navigator.clipboard.writeText) {
+            console.log('浏览器不支持Clipboard API，将使用回退方法');
+        }
+        
+        // 添加键盘快捷键
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+Enter 执行检测
+            if (e.ctrlKey && e.key === 'Enter' && document.activeElement === tokenInput) {
+                e.preventDefault();
+                checkBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
